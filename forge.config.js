@@ -16,7 +16,7 @@ module.exports = {
         name: 'TimePilot',
         authors: 'Blane Townsend',
         description: 'A timecode app that plays music and exports timecode to MIDI and Artnet.',
-        iconUrl: './src/favicon.ico',
+        iconUrl: 'https://galaxy.darwincloud.com/Apps/fs/19/Resources/TimePilot/favicon.ico',
         setupIcon: './src/favicon.ico',
       },
     },

@@ -1,12 +1,12 @@
 {
-	"artnetIp": "192.168.1.176",
+	"artnetIp": "192.168.1.180",
 	"artnetPort": 6454,
 	"frameRate": 30,
 	"hours": 1,
 	"minutes": 10,
 	"seconds": 0,
 	"frames": 0,
-	"midiOutput": "506700797",
-	"audioDeviceID": "bfdb87098ca4eb15f7c8146236385add248a7b946cc8daa7112692fa3e282c0b",
-	"audioFilePath": "/Users/blane/Clients/Drone/ChristmasShow/ShowMusicExported.mp3"
+	"midiOutput": "output-1",
+	"audioDeviceID": "default",
+	"audioFilePath": "C:\\Users\\blane\\Downloads\\ShowMusicExported.mp3"
 }

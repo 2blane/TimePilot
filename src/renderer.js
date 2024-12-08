@@ -185,21 +185,21 @@ function sendArtNetTimecode(hours, minutes, seconds, frames) {
   
     const packet = window.Buffer.from([
       0x41, 0x72, 0x74, 0x2D, 0x4E, 0x65, 0x74, 0x00, // "Art-Net\0"
-      0x97, 0x00, // Opcode (ArtTimecode)
+      0x00, 0x97, // Opcode (ArtTimecode)
       0x00, 0x0E, // Protocol Version (14)
       0x00, 0x00, // Reserved
-      fpsCode,    // FPS (0=24, 1=25, 2=29.97, 3=30)
-      hours,      // Hours
-      minutes,    // Minutes
-      seconds,    // Seconds
-      frames      // Frames
+      frames,
+      seconds,
+      minutes,
+      hours,
+      fpsCode // FPS (0=24, 1=25, 2=29.97, 3=30)
     ]);
     
     if (!artnetSocket) {
         console.log("No Artnet Socket Setup", artnetSocket)
         return
     }
-    // console.log("artnet socket", artnetSocket)
+    console.log("artnet socket", fpsCode, hours, minutes, seconds, frames)
     try {
         artnetSocket.send(packet, port, ip, (err) => {
             if (err) console.error('ArtNet send error:', err);
