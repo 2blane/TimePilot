@@ -4,25 +4,26 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: './src/icon', // Windows icon (no .ico extension)
+    platform: 'win32',
+    arch: 'x64',
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        name: 'TimePilot',
+        authors: 'Blane Townsend',
+        description: 'A timecode app that plays music and exports timecode to MIDI and Artnet.',
+        iconUrl: './src/favicon.ico',
+        setupIcon: './src/favicon.ico',
+      },
     },
     {
       name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
-    },
-    {
-      name: '@electron-forge/maker-deb',
-      config: {},
-    },
-    {
-      name: '@electron-forge/maker-rpm',
-      config: {},
-    },
+      platforms: ['darwin', 'win32'],
+    }
   ],
   plugins: [
     {
