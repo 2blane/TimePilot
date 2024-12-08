@@ -47,6 +47,22 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('minutes').value = minutesValue;
     document.getElementById('seconds').value = secondsValue;
     document.getElementById('frames').value = framesValue;
+
+    //now autoload the file path if we can.
+    try {
+        let filePath = window.settings.get('audioFilePath') || null;
+        if (filePath) {
+            currentFilePath = filePath;
+            filePathElement.textContent = `Selected File: ${filePath}`;
+            audioPlayer.src = `file://${filePath}`; // Set audio player source to file path
+            playButton.disabled = false; // Enable the play button
+        } else {
+            filePathElement.textContent = 'No file selected';
+            playButton.disabled = true;
+        }
+    } catch (error) {
+        console.error('Error auto-selecting file:', error);
+    }
 });
 
 artnetIpInput.addEventListener('change', () => {
@@ -85,6 +101,7 @@ selectFileButton.addEventListener('click', async () => {
       filePathElement.textContent = `Selected File: ${filePath}`;
       audioPlayer.src = `file://${filePath}`; // Set audio player source to file path
       playButton.disabled = false; // Enable the play button
+      window.settings.set('audioFilePath', filePath)
     } else {
       filePathElement.textContent = 'No file selected';
       playButton.disabled = true;
@@ -289,15 +306,19 @@ async function listAudioDevices() {
     
     audioOutputSelect.innerHTML = '';
     let defaultDeviceId = null;
-  
+
+    let audioDeviceIDSetting = window.settings.get('audioDeviceID') || 'default';
+    
     audioDevices.forEach((device, index) => {
       const option = document.createElement('option');
       option.value = device.deviceId;
       option.textContent = device.label || `Device ${index + 1}`;
       audioOutputSelect.appendChild(option);
-  
+    
       // Check if this is the default device
-      if (device.deviceId === 'default') {
+      console.log("deviceID", device.deviceId)
+      if (device.deviceId === audioDeviceIDSetting) {
+        console.log("found default", device.deviceId)
         defaultDeviceId = device.deviceId;
         option.selected = true; // Automatically select it in the dropdown
       }
@@ -312,7 +333,7 @@ async function listAudioDevices() {
         console.error('Error setting default audio output:', error);
       }
     }
-  }
+}
 
 // Change the audio output device
 audioOutputSelect.addEventListener('change', async (event) => {
@@ -320,10 +341,11 @@ audioOutputSelect.addEventListener('change', async (event) => {
 
     if (typeof audioPlayer.setSinkId === 'function') {
         try {
-        await audioPlayer.setSinkId(deviceId);
-        console.log(`Audio output changed to deviceId: ${deviceId}`);
+            await audioPlayer.setSinkId(deviceId);
+            window.settings.set('audioDeviceID', deviceId);
+            console.log(`Audio output changed to deviceId: ${deviceId}`);
         } catch (error) {
-        console.error('Error setting audio output:', error);
+            console.error('Error setting audio output:', error);
         }
     } else {
         console.warn('Audio output selection is not supported on this browser or version of Electron.');
@@ -336,10 +358,23 @@ async function listMidiOutputs() {
     const outputs = Array.from(midiAccess.outputs.values());
     midiOutputSelect.innerHTML = '';
     
+    //add the none option
+    let optNone = document.createElement('option');
+    optNone.value = '';
+    optNone.textContent = 'None';
+    midiOutputSelect.appendChild(optNone);
+
     outputs.forEach((output, index) => {
       const option = document.createElement('option');
       option.value = output.id;
       option.textContent = output.name || `MIDI Device ${index + 1}`;
+      //if this is the preference - then select it.
+      if (output.id === window.settings.get('midiOutput') || '') {
+        //found it, now select it
+        option.selected = true
+        selectedMidiOutput = midiAccess.outputs.get(output.id)
+        console.log("Auto-selected Midi Output", selectedMidiOutput)
+      }
       midiOutputSelect.appendChild(option);
     });
   }
@@ -350,7 +385,9 @@ midiOutputSelect.addEventListener('change', () => {
     const midiAccess = navigator.requestMIDIAccess({sysex: true});
     midiAccess.then(access => {
       selectedMidiOutput = access.outputs.get(selectedId);
-      console.log(`Selected MIDI Output: ${selectedMidiOutput.name}`);
+      console.log(`Selected MIDI Output`, selectedMidiOutput);
+      //now save this as a preference
+      window.settings.set('midiOutput', selectedId)
     });
 });
 
