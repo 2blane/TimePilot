@@ -2,6 +2,17 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 const { contextBridge, ipcRenderer } = require('electron');
 const dgram = require('dgram');
+const Store = require('simple-json-store');
+
+// Path to where the settings are saved
+const store = new Store('./config.json', { artnetIp: '255.255.255.255', artnetPort: 6454, frameRate: 30 });
+
+// Expose the store to the renderer process
+contextBridge.exposeInMainWorld('settings', {
+  get: (key) => store.get(key),
+  set: (key, value) => store.set(key, value),
+  delete: (key) => store.delete(key),
+});
 
 // Expose dgram (for ArtNet support) to the renderer process
 contextBridge.exposeInMainWorld('udp', {

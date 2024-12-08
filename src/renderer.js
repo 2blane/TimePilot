@@ -26,6 +26,56 @@ let selectedMidiOutput = null;
 let quarterFrameIntervalId = null;
 let artnetSocket = null;
 
+// When the app loads, read the settings and prefill the form
+window.addEventListener('DOMContentLoaded', () => {
+    // Get saved settings and populate form inputs
+    let ipValue = window.settings.get('artnetIp') || '255.255.255.255';
+    let portValue = window.settings.get('artnetPort') || 6454;
+    frameRate = window.settings.get('frameRate') || 30;
+
+    let hoursValue = window.settings.get('hours') || 0;
+    let minutesValue = window.settings.get('minutes') || 0;
+    let secondsValue = window.settings.get('seconds') || 0;
+    let framesValue = window.settings.get('frames') || 0;
+    
+    console.log("DOM Content Loaded", ipValue, portValue, frameRate)
+    document.getElementById('artnet-ip').value = ipValue;
+    document.getElementById('artnet-port').value = portValue;
+    //document.getElementById('frame-rate').value = frameRate;
+
+    document.getElementById('hours').value = hoursValue;
+    document.getElementById('minutes').value = minutesValue;
+    document.getElementById('seconds').value = secondsValue;
+    document.getElementById('frames').value = framesValue;
+});
+
+artnetIpInput.addEventListener('change', () => {
+    const ip = artnetIpInput.value;
+    window.settings.set('artnetIp', ip);
+});
+  
+artnetPortInput.addEventListener('change', () => {
+    const port = parseInt(artnetPortInput.value) || 6454;
+    window.settings.set('artnetPort', port);
+});
+
+hoursInput.addEventListener('change', () => {
+    const val = parseInt(hoursInput.value) || 0;
+    window.settings.set('hours', val);
+});
+minutesInput.addEventListener('change', () => {
+    const val = parseInt(minutesInput.value) || 0;
+    window.settings.set('minutes', val);
+});
+secondsInput.addEventListener('change', () => {
+    const val = parseInt(secondsInput.value) || 0;
+    window.settings.set('seconds', val);
+});
+framesInput.addEventListener('change', () => {
+    const val = parseInt(framesInput.value) || 0;
+    window.settings.set('frames', val);
+});
+
 // Handle file selection
 selectFileButton.addEventListener('click', async () => {
   try {

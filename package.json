@@ -31,6 +31,8 @@
   "dependencies": {
     "@tonejs/midi": "^2.0.28",
     "artnet": "^1.4.0",
-    "electron-squirrel-startup": "^1.0.1"
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-store": "^10.0.0",
+    "simple-json-store": "^0.0.1"
   }
 }
